@@ -2,11 +2,13 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const mysql = require('mysql2/promise');
 
+require('dotenv').config();
+
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'bansystem'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
 };
 
 const app = express();
@@ -41,21 +43,21 @@ app.patch('/redeem-token', async (req, res) => {
     const connection = await mysql.createConnection(dbConfig);
 
     // Check if the token is valid and unused
-    const tokenId = await getValidUnusedToken(token);
+    const tokenId = await getValidUnusedToken(connection, token);
     if (!tokenId) {
       res.status(400).json({ error: 'Invalid or used token' });
       return;
     }
 
     // Check if the player is already whitelisted
-    const isWhitelisted = await isPlayerWhitelisted(name);
+    const isWhitelisted = await isPlayerWhitelisted(connection, name);
     if (isWhitelisted) {
       res.status(400).json({ error: 'Player is already whitelisted' });
       return;
     }
 
     // Add the player to the whitelist
-    await addPlayerToWhitelist(tokenId, name);
+    await addPlayerToWhitelist(connection, tokenId, name);
 
     res.send({
       success: true,

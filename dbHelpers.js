@@ -1,5 +1,5 @@
 // Database Helpers
-const getValidUnusedToken = async (token) => {
+const getValidUnusedToken = async (connection, token) => {
   const [rows] = await connection.execute(
     `SELECT bw.token_id
     FROM bansystem_token
@@ -10,7 +10,7 @@ const getValidUnusedToken = async (token) => {
   return rows.length > 0 ? rows[0].token_id : null;
 };
 
-const isPlayerWhitelisted = async (name) => {
+const isPlayerWhitelisted = async (connection, name) => {
   const [rows] = await connection.execute(
     `SELECT 1
     FROM bansystem_whitelist
@@ -19,7 +19,7 @@ const isPlayerWhitelisted = async (name) => {
   return rows.length > 0;
 };
 
-const addPlayerToWhitelist = async (tokenId, name) => {
+const addPlayerToWhitelist = async (connection, tokenId, name) => {
   await connection.execute(
     `INSERT INTO bansystem_whitelist (token_id, player_id) VALUE (?, ?);`, [tokenId, name]);
 };
