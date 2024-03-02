@@ -45,14 +45,14 @@ app.patch('/redeem-token', async (req, res) => {
     // Check if the token is valid and unused
     const tokenId = await getValidUnusedToken(connection, token);
     if (!tokenId) {
-      res.status(400).json({ error: 'Invalid or used token' });
+      res.status(400).json({ type: 1, error: 'Invalid or used token' });
       return;
     }
 
     // Check if the player is already whitelisted
     const isWhitelisted = await isPlayerWhitelisted(connection, name);
-    if (isWhitelisted) {
-      res.status(400).json({ error: 'Player is already whitelisted' });
+    if (isWhitelisted || true) {
+      res.status(400).json({ type: 2, error: 'Player is already whitelisted' });
       return;
     }
 
@@ -65,7 +65,7 @@ app.patch('/redeem-token', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while processing your request.' });
+    res.status(500).json({ error: 'An error occurred while processing the request.' });
   }
 });
 
