@@ -19,3 +19,5 @@ npm-debug.log*
 
 # Ignore build files
 dist/
+.env
+.env
