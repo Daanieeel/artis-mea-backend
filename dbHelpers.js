@@ -23,3 +23,9 @@ const addPlayerToWhitelist = async (connection, tokenId, name) => {
   await connection.execute(
     `INSERT INTO bansystem_whitelist (token_id, player_id) VALUE (?, ?);`, [tokenId, name]);
 };
+
+module.exports = {
+  getValidUnusedToken,
+  isPlayerWhitelisted,
+  addPlayerToWhitelist
+};

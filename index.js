@@ -1,6 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const mysql = require('mysql2/promise');
+const dbHelpers = require('./dbHelpers');
 
 require('dotenv').config();
 
@@ -43,21 +44,21 @@ app.patch('/redeem-token', async (req, res) => {
     const connection = await mysql.createConnection(dbConfig);
 
     // Check if the token is valid and unused
-    const tokenId = await getValidUnusedToken(connection, token);
+    const tokenId = await dbHelpers.getValidUnusedToken(connection, token);
     if (!tokenId) {
       res.status(400).json({ type: 1, error: 'Invalid or used token' });
       return;
     }
 
     // Check if the player is already whitelisted
-    const isWhitelisted = await isPlayerWhitelisted(connection, name);
+    const isWhitelisted = await dbHelpers.isPlayerWhitelisted(connection, name);
     if (isWhitelisted || true) {
       res.status(400).json({ type: 2, error: 'Player is already whitelisted' });
       return;
     }
 
     // Add the player to the whitelist
-    await addPlayerToWhitelist(connection, tokenId, name);
+    await dbHelpers.addPlayerToWhitelist(connection, tokenId, name);
 
     res.send({
       success: true,
